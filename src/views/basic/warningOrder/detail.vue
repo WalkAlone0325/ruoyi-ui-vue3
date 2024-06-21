@@ -75,7 +75,7 @@ getList()
   <div class="app-container">
     <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="auto">
       <el-form-item label="故障单编码" prop="faultOrderCode">
-        <el-input v-model=" faultOrderCode" clearable placeholder="请输入故障单编码" style="width: 200px;" />
+        <el-input v-model="queryParams.faultOrderCode" clearable placeholder="请输入故障单编码" style="width: 200px;" />
       </el-form-item>
       <el-form-item label="告警渠道" prop="opFaultOrderAlarmChannelCode">
         <el-select v-model="queryParams.opFaultOrderAlarmChannelCode" placeholder="请选择告警渠道" style="width: 200px" clearable>
