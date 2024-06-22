@@ -2,6 +2,7 @@
 import { listDetailWarningOrder, listWarningConfig, listWarningType } from '@/api/basic/warningOrder'
 
 const { proxy } = getCurrentInstance()
+const route = useRoute()
 
 const { sys_yes_no, op_fault_order_alarm_channel } = proxy.useDict('sys_yes_no', 'op_fault_order_alarm_channel')
 
@@ -9,9 +10,10 @@ const queryParams = ref({
   pageNum: 1,
   pageSize: 10,
   faultOrderCode: undefined,
-  opFaultOrderAlarmChannelCode: undefined,
-  warningConfigDetailId: undefined,
   warningConfigCode: undefined,
+  warningConfigDetailId: undefined,
+  warningFaultOrderAlarmId: undefined,
+  opFaultOrderAlarmChannelCode: undefined,
   isEnd: undefined,
 })
 const showSearch = ref(true)
@@ -64,9 +66,17 @@ function handleConfigCode(val) {
   }
 }
 
-// 获取查询
-getTypeData()
-getConfigData()
+watch(() => route.query.id, (val, preVal) => {
+  if (val && val !== preVal) {
+    queryParams.value.warningFaultOrderAlarmId = val
+  }
+}, { immediate: true })
+
+onMounted(() => {
+  // 获取查询
+  getTypeData()
+  getConfigData()
+})
 
 getList()
 </script>

@@ -2,12 +2,14 @@
 import { listWarningConfig, listWarningOrder, listWarningType } from '@/api/basic/warningOrder'
 
 const { proxy } = getCurrentInstance()
+const router = useRouter()
 
 const { sys_yes_no, op_fault_order_alarm_channel } = proxy.useDict('sys_yes_no', 'op_fault_order_alarm_channel')
 
 const queryParams = ref({
   pageNum: 1,
   pageSize: 10,
+  faultOrderCode: undefined,
   opFaultOrderAlarmChannelCode: undefined,
   warningConfigDetailId: undefined,
   warningConfigCode: undefined,
@@ -63,6 +65,14 @@ function handleConfigCode(val) {
   }
 }
 
+// 点击某一行
+function handleRowClick(row) {
+  router.push({
+    path: '/order/warningOrderDetail',
+    query: { id: row.id },
+  })
+}
+
 // 获取查询
 getTypeData()
 getConfigData()
@@ -73,6 +83,9 @@ getList()
 <template>
   <div class="app-container">
     <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="auto">
+      <el-form-item label="故障单编码" prop="faultOrderCode">
+        <el-input v-model="queryParams.faultOrderCode" clearable placeholder="请输入故障单编码" style="width: 200px;" />
+      </el-form-item>
       <el-form-item label="告警渠道" prop="opFaultOrderAlarmChannelCode">
         <el-select v-model="queryParams.opFaultOrderAlarmChannelCode" placeholder="请选择告警渠道" style="width: 200px" clearable>
           <el-option
@@ -124,7 +137,7 @@ getList()
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="list">
+    <el-table v-loading="loading" :data="list" @row-click="handleRowClick">
       <el-table-column label="故障单编码" align="center" prop="faultOrderCode" />
       <el-table-column label="告警配置编码" align="center" prop="warningConfigDetailId" />
       <el-table-column label="告警渠道" align="center" prop="opFaultOrderAlarmChannelName" />
