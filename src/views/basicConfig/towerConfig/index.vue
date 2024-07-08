@@ -63,7 +63,7 @@ getTowerConfigData()
         <el-input v-model="user.chinaTowerPassword" placeholder="请输入密码" type="password" show-password />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submit">
+        <el-button v-permission="['chinatower:config:add']" type="primary" @click="submit">
           保存
         </el-button>
         <el-button type="danger" @click="close">

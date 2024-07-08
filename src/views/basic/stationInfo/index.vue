@@ -602,7 +602,7 @@ getList()
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          v-hasPermi="['system:stationInfo:export']"
+          v-hasPermi="['op:stationInfo:export']"
           type="warning"
           plain
           icon="Download"

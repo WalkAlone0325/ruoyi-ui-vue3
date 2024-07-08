@@ -302,7 +302,7 @@ getList()
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
-              v-hasPermi="['system:user:add']"
+              v-hasPermi="['op:stationInfo:binding']"
               type="primary"
               plain
               icon="Plus"
@@ -313,7 +313,7 @@ getList()
           </el-col>
           <el-col :span="1.5">
             <el-button
-              v-hasPermi="['system:user:remove']"
+              v-hasPermi="['op:stationInfo:unbound']"
               type="danger"
               :disabled="multipleBind"
               plain
@@ -348,7 +348,7 @@ getList()
           <el-table-column label="电信公司维护服务等级" align="center" prop="telecomServiceLevelName" />
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template #default="scope">
-              <el-button v-hasPermi="['system:user:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">
+              <el-button v-hasPermi="['op:stationInfo:unbound']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">
                 解绑
               </el-button>
             </template>

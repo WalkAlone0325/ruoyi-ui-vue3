@@ -67,7 +67,7 @@ getVerifyData()
         <el-input v-model="user.verification" placeholder="请输入验证码" type="text" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submit">
+        <el-button v-hasPermi="['chinatower:verification:add']" type="primary" @click="submit">
           保存
         </el-button>
         <el-button type="danger" @click="close">
