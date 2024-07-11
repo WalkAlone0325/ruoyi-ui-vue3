@@ -106,31 +106,31 @@ getVerifyData()
 
     <el-row>
       <el-col :span="24" style="margin-bottom: 20px;">
-        <el-button type="primary" @click="getVerifyData">
+        <el-button v-hasPermi="['op:selenium:conditions']" type="primary" @click="getVerifyData">
           判断是否满足登录
         </el-button>
         <span style="margin-left: 30px;">{{ msg1 }}</span>
       </el-col>
       <el-col :span="24" style="margin-bottom: 20px;">
-        <el-button type="primary" @click="getSession">
+        <el-button v-hasPermi="['op:selenium:conditions']" type="primary" @click="getSession">
           判断是否满足登录（SESSION）
         </el-button>
         <span style="margin-left: 30px;">{{ msg2 }}</span>
       </el-col>
       <el-col :span="24" style="margin-bottom: 20px;">
-        <el-button type="primary" :disabled="disabled3" @click="getLogin">
+        <el-button v-hasPermi="['op:selenium:password']" type="primary" :disabled="disabled3" @click="getLogin">
           填充用户名密码
         </el-button>
         <span style="margin-left: 30px;">{{ msg3 }}</span>
       </el-col>
       <el-col :span="24" style="margin-bottom: 20px;">
-        <el-button type="primary" :disabled="disabled4" @click="getRefresh">
+        <el-button v-hasPermi="['op:selenium:refreshmsg']" type="primary" :disabled="disabled4" @click="getRefresh">
           获取消息发送按钮内容
         </el-button>
         <span style="margin-left: 30px;">{{ msg4 }}</span>
       </el-col>
       <el-col :span="24" style="margin-bottom: 20px;">
-        <el-button type="primary" :disabled="disabled5" @click="getCode">
+        <el-button v-hasPermi="['op:selenium:sendcheckcode']" type="primary" :disabled="disabled5" @click="getCode">
           发送短信按钮
         </el-button>
         <span style="margin-left: 30px;">{{ msg5 }}</span>
@@ -141,7 +141,7 @@ getVerifyData()
             <el-input v-model="user.verification" placeholder="请输入验证码" type="text" />
           </el-form-item>
         </el-form>
-        <el-button v-hasPermi="['chinatower:verification:add']" type="primary" :disabled="disabled5" @click="getVerification">
+        <el-button v-hasPermi="['op:selenium:verification']" type="primary" :disabled="disabled5" @click="getVerification">
           输入校验码，进行校验
         </el-button>
         <span style="margin-left: 30px;">{{ msg6 }}</span>

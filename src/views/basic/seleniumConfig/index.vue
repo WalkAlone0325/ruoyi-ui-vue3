@@ -73,25 +73,25 @@ async function updateLogin() {
 
     <el-row>
       <el-col :span="24" style="margin-bottom: 20px;">
-        <el-button type="primary" :loading="lod1" @click="getStatusInfo">
+        <el-button v-hasPermi="['op:selenium:pagestatus']" type="primary" :loading="lod1" @click="getStatusInfo">
           页面状态信息
         </el-button>
         <span style="margin-left: 30px;">{{ msg1 }}</span>
       </el-col>
       <el-col :span="24" style="margin-bottom: 20px;">
-        <el-button type="primary" :loading="lod3" @click="statusValue">
+        <el-button v-hasPermi="['op:selenium:updatestatus']" type="primary" :loading="lod3" @click="statusValue">
           更新操作状态
         </el-button>
         <!-- <span style="margin-left: 30px;">{{ msg1 }}</span> -->
       </el-col>
       <el-col :span="24" style="margin-bottom: 20px;">
-        <el-button type="primary" :loading="lod4" @click="updateLogin">
+        <el-button v-hasPermi="['op:selenium:updatelogin']" type="primary" :loading="lod4" @click="updateLogin">
           更新登录状态
         </el-button>
         <span style="margin-left: 30px;">{{ msg2 }}</span>
       </el-col>
       <el-col :span="24" style="margin-bottom: 20px;">
-        <el-button type="primary" :loading="lod2" @click="seleniumInit">
+        <el-button v-hasPermi="['op:selenium:init']" type="primary" :loading="lod2" @click="seleniumInit">
           初始化
         </el-button>
         <span style="margin-left: 30px;">{{ msg3 }}</span>
