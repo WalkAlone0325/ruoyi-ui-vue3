@@ -2,7 +2,7 @@
   "name": "ruoyi-vue-plus",
   "type": "module",
   "version": "4.8.0",
-  "description": "RuoYi-Vue-Plus后台管理系统",
+  "description": "铁塔维护工单管理系统",
   "author": "LionLi",
   "license": "MIT",
   "repository": {
