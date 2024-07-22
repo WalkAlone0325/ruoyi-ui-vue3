@@ -34,3 +34,20 @@ export function listWarningConfig(query) {
     params: query,
   })
 }
+
+// 结束告警工单
+export function endWarningOrder(data) {
+  return request({
+    url: '/op/warningFaultOrderAlarmInfo/endAlarm',
+    method: 'put',
+    data,
+  })
+}
+
+export function endWarningOrderDetail(data) {
+  return request({
+    url: '/op/warningFaultOrderAlarmDetail/endAlarm',
+    method: 'put',
+    data,
+  })
+}

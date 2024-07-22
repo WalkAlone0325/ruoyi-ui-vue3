@@ -12,7 +12,7 @@ export function listStationNotBind(query) {
 // 已绑定站点信息列表
 export function listStationYesBind(query) {
   return request({
-    url: '/system/personnelBasicInfo/list/page',
+    url: '/system/personnelBasicInfo/list/dept/page',
     method: 'get',
     params: query,
   })
