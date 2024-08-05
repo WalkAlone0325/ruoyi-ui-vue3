@@ -64,12 +64,6 @@ const data = reactive({
     opFaultOrderAlarmValue: [
       { required: true, message: '告警时间策略值不能为空', trigger: 'blur' },
     ],
-    opFaultOrderAlarmNumber: [
-      { required: true, message: '告警次数不能为空', trigger: 'blur' },
-    ],
-    opFaultOrderAlarmValueParameter: [
-      { required: true, message: '告警辅助参数不能为空', trigger: 'blur' },
-    ],
     opFaultOrderAlarmChannelCode: [
       { required: true, message: '告警渠道不能为空', trigger: 'blur' },
     ],
@@ -440,14 +434,10 @@ getList()
           </el-col>
           <el-col :span="12">
             <el-form-item label="告警时间策略值" prop="opFaultOrderAlarmValue">
-              <el-input v-model="form.opFaultOrderAlarmValue" type="number" placeholder="请输入告警时间策略值" />
+              <el-input v-model="form.opFaultOrderAlarmValue" placeholder="请输入告警时间策略值" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="告警次数" prop="opFaultOrderAlarmNumber">
-              <el-input v-model="form.opFaultOrderAlarmNumber" type="number" placeholder="请输入告警次数" />
-            </el-form-item>
-          </el-col>
+
           <el-col :span="12">
             <el-form-item label="告警辅助参数" prop="opFaultOrderAlarmValueParameter">
               <el-input v-model="form.opFaultOrderAlarmValueParameter" placeholder="请输入告警辅助参数" />
@@ -470,11 +460,7 @@ getList()
               <el-input v-model="form.opFaultOrderAlarmDelayedTime" type="number" placeholder="请输入首次延时时间" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="结束时长(分)" prop="finishTime">
-              <el-input v-model="form.finishTime" type="number" placeholder="请输入结束时长" />
-            </el-form-item>
-          </el-col>
+
           <el-col :span="12">
             <el-form-item label="模板编码" prop="templateCode">
               <el-select v-model="form.templateCode" placeholder="请选择模板编码">
@@ -507,6 +493,16 @@ getList()
           <el-col :span="12">
             <el-form-item label="生效结束时间" prop="takeEffectEndTime">
               <el-time-picker v-model="form.takeEffectEndTime" format="HH:mm:ss" value-format="HH:mm:ss" style="width: 100%;" placeholder="请选择生效结束时间" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="告警次数" prop="opFaultOrderAlarmNumber">
+              <el-input v-model="form.opFaultOrderAlarmNumber" type="number" placeholder="请输入告警次数" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="结束时长(分)" prop="finishTime">
+              <el-input v-model="form.finishTime" type="number" placeholder="请输入结束时长" />
             </el-form-item>
           </el-col>
           <el-col :span="24">

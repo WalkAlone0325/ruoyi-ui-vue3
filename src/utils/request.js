@@ -63,6 +63,7 @@ service.interceptors.request.use((config) => {
       }
     }
   }
+  console.log('🚀:>> ', config)
   return config
 }, (error) => {
   console.log(error)

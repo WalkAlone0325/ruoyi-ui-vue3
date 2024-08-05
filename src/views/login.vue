@@ -9,8 +9,8 @@ const router = useRouter()
 const { proxy } = getCurrentInstance()
 
 const loginForm = ref({
-  username: 'admin',
-  password: 'admin123',
+  username: '',
+  password: '',
   rememberMe: false,
   code: '',
   uuid: '',
@@ -47,7 +47,12 @@ function handleLogin() {
         Cookies.remove('rememberMe')
       }
       // 调用action的登录方法
-      userStore.login(loginForm.value)
+      userStore.login({
+        username: loginForm.value.username,
+        password: encrypt(loginForm.value.password),
+        uuid: loginForm.value.uuid,
+        code: loginForm.value.code,
+      })
         .then(() => {
           router.push({ path: redirect.value || '/' })
         })
@@ -91,7 +96,7 @@ getCookie()
   <div class="login">
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">
-        RuoYi-Vue-Plus后台管理系统
+        铁塔维护工单管理系统
       </h3>
       <el-form-item prop="username">
         <el-input

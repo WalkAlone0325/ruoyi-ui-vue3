@@ -1,5 +1,5 @@
 <script setup name="WarningOrder">
-import { listWarningConfig, listWarningOrder, listWarningType } from '@/api/basic/warningOrder'
+import { endWarningOrder, listWarningConfig, listWarningOrder, listWarningType } from '@/api/basic/warningOrder'
 
 const { proxy } = getCurrentInstance()
 const router = useRouter()
@@ -71,6 +71,14 @@ function handleRowClick(row) {
     path: '/order/warningOrderDetail',
     query: { id: row.id },
   })
+}
+
+async function handleOver(row) {
+  const res = await endWarningOrder({ id: row.id })
+  if (res.code === 200) {
+    proxy.$modal.msgSuccess('操作成功')
+    getList()
+  }
 }
 
 // 获取查询
@@ -152,6 +160,13 @@ getList()
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template #default="scope">
+          <el-button v-if="scope.row.isEnd === 'N'" v-hasPermi="['op:warningConfigDetail:edit']" link type="primary" icon="CloseBold" @click.stop="handleOver(scope.row)">
+            结束
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination

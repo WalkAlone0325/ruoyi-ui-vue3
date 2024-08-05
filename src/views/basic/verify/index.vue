@@ -93,7 +93,7 @@ onUnmounted(() => {
   timer.value = null
 })
 
-getVerifyData()
+// getVerifyData()
 </script>
 
 <template>

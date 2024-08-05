@@ -1,5 +1,5 @@
 <script setup name="WarningOrderDetail">
-import { listDetailWarningOrder, listWarningConfig, listWarningType } from '@/api/basic/warningOrder'
+import { endWarningOrderDetail, listDetailWarningOrder, listWarningConfig, listWarningType } from '@/api/basic/warningOrder'
 
 const { proxy } = getCurrentInstance()
 const route = useRoute()
@@ -63,6 +63,14 @@ function handleConfigCode(val) {
   else {
     configOptions.value = []
     queryParams.value.warningConfigDetailId = undefined
+  }
+}
+
+async function handleOver(row) {
+  const res = await endWarningOrderDetail({ id: row.id })
+  if (res.code === 200) {
+    proxy.$modal.msgSuccess('操作成功')
+    getList()
   }
 }
 
@@ -159,6 +167,13 @@ getList()
       <el-table-column label="消息模板内容" align="center" prop="voiceTemplateContent" />
       <el-table-column label="告警通知联系人" align="center" prop="contactMobiles" />
       <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template #default="scope">
+          <el-button v-if="scope.row.isEnd === 'N'" v-hasPermi="['op:warningConfigDetail:edit']" link type="primary" icon="CloseBold" @click.stop="handleOver(scope.row)">
+            结束
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination
