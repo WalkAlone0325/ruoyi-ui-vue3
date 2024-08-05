@@ -162,7 +162,7 @@ getList()
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button v-if="scope.row.isEnd === 'N'" v-hasPermi="['op:warningConfigDetail:edit']" link type="primary" icon="CloseBold" @click.stop="handleOver(scope.row)">
+          <el-button v-if="scope.row.isEnd === 'N'" v-hasPermi="['op:warningFaultOrderAlarmInfo:endAlarm']" link type="primary" icon="CloseBold" @click.stop="handleOver(scope.row)">
             结束
           </el-button>
         </template>
