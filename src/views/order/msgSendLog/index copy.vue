@@ -1,10 +1,9 @@
 <script setup name="MessageNotificationLog">
 import { delMsgLog, getMessageNotificationLog, listMsgLog } from '@/api/basic/msgSend'
-import { getCity, getCounty } from '@/api/basic'
 
 const { proxy } = getCurrentInstance()
 
-const { inform_type, op_fault_order_alarm_channel, inform_send_type, sys_common_status } = proxy.useDict('inform_type', 'op_fault_order_alarm_channel', 'inform_send_type', 'sys_common_status')
+const { inform_type, op_fault_order_alarm_channel, inform_send_type, sys_common_status } = proxy.useDict('inform_type', 'op_fault_order_alarm_channel', 'inform_send_type', 'sys_common_status', 'sys_common_status')
 
 const messageNotificationLogList = ref([])
 const open = ref(false)
@@ -16,8 +15,6 @@ const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
 const title = ref('')
-const countyOptions = ref([])
-const cityOptions = ref([])
 
 const data = reactive({
   form: {},
@@ -30,7 +27,7 @@ const data = reactive({
     typeName: undefined,
     channelCode: undefined,
     channelName: undefined,
-    sendOpStatusCode: undefined,
+    sendTypeCode: undefined,
     sendTypeName: undefined,
     sendPersonnelId: undefined,
     sendPersonnelCode: undefined,
@@ -71,7 +68,7 @@ const data = reactive({
     channelName: [
       { required: true, message: '发送渠道不能为空', trigger: 'blur' },
     ],
-    sendOpStatusCode: [
+    sendTypeCode: [
       { required: true, message: '发送类型不能为空', trigger: 'blur' },
     ],
     sendTypeName: [
@@ -136,35 +133,11 @@ const { queryParams, form, rules } = toRefs(data)
 /** 查询通知公告列表 */
 function getList() {
   loading.value = true
-  listMsgLog({ ...queryParams.value }).then((response) => {
+  listMsgLog(queryParams.value).then((response) => {
     messageNotificationLogList.value = response.data.records
     total.value = response.data.total
     loading.value = false
   })
-}
-
-async function getCityData(params) {
-  const res = await getCity(params)
-  if (res.code === 200) {
-    cityOptions.value = res.data
-  }
-}
-
-async function getCountyData(params) {
-  const res = await getCounty(params)
-  if (res.code === 200) {
-    countyOptions.value = res.data
-  }
-}
-
-function changeCity(e) {
-  if (!e) {
-    queryParams.value.cityDeptId = ''
-    queryParams.value.countyDeptId = ''
-    countyOptions.value = []
-    return
-  }
-  getCountyData({ parentId: e })
 }
 
 // 取消按钮
@@ -177,15 +150,13 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    cityDeptId: null,
-    countyDeptId: null,
     platformId: null,
     content: null,
     typeCode: null,
     typeName: null,
     channelCode: null,
     channelName: null,
-    sendOpStatusCode: null,
+    sendTypeCode: null,
     sendTypeName: null,
     sendPersonnelId: null,
     sendPersonnelCode: null,
@@ -301,33 +272,12 @@ function handleExport() {
   }, `messageNotificationLog_${new Date().getTime()}.xlsx`)
 }
 
-getCityData({ parentId: '1802875368297447438' })
 getList()
 </script>
 
 <template>
   <div class="app-container">
     <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="70px">
-      <el-form-item label="市级" prop="cityDeptId">
-        <el-select v-model="queryParams.cityDeptId" placeholder="请选择市级" style="width: 220px" clearable @change="changeCity">
-          <el-option
-            v-for="dict in cityOptions"
-            :key="dict.deptId"
-            :label="dict.deptName"
-            :value="dict.deptId"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="区县" prop="countyDeptId">
-        <el-select v-model="queryParams.countyDeptId" placeholder="请选择区县" style="width: 220px" clearable>
-          <el-option
-            v-for="dict in countyOptions"
-            :key="dict.deptId"
-            :label="dict.deptName"
-            :value="dict.deptId"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="消息类型" prop="typeCode">
         <el-select v-model="queryParams.typeCode" placeholder="请选择消息类型" style="width: 220px" clearable>
           <el-option
@@ -348,8 +298,8 @@ getList()
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="发送状态" prop="sendOpStatusCode">
-        <el-select v-model="queryParams.sendOpStatusCode" placeholder="请选择发送状态" style="width: 220px" clearable>
+      <el-form-item label="发送类型" prop="sendTypeCode">
+        <el-select v-model="queryParams.sendTypeCode" placeholder="请选择发送类型" style="width: 220px" clearable>
           <el-option
             v-for="dict in inform_send_type"
             :key="dict.value"
@@ -368,21 +318,29 @@ getList()
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="平台回执业务状态" prop="sendOpStatusCode" label-width="130px">
+        <el-select v-model="queryParams.sendOpStatusCode" placeholder="请选择平台回执业务状态" style="width: 220px" clearable>
+          <el-option
+            v-for="dict in sys_common_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="人员姓名" prop="sendPersonnelName">
         <el-input
           v-model="queryParams.sendPersonnelName"
           placeholder="请输入人员姓名"
           clearable
-          style="width: 220px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="发送终端" prop="sendPersonnelTerminalCode">
+      <el-form-item label="发送人员终端标识" prop="sendPersonnelTerminalCode" label-width="130px">
         <el-input
           v-model="queryParams.sendPersonnelTerminalCode"
-          placeholder="请输入发送终端"
+          placeholder="请输入发送人员终端标识"
           clearable
-          style="width: 220px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -411,7 +369,7 @@ getList()
       </el-col> -->
       <el-col :span="1.5">
         <el-button
-          v-hasPermi="['op:messageNotificationCombineLog:query']"
+          v-hasPermi="['op:messageNotificationLog:query']"
           type="primary"
           plain
           icon="View"
@@ -423,7 +381,7 @@ getList()
       </el-col>
       <el-col :span="1.5">
         <el-button
-          v-hasPermi="['op:messageNotificationCombineLog:remove']"
+          v-hasPermi="['op:messageNotificationLog:remove']"
           type="danger"
           plain
           icon="Delete"
@@ -449,24 +407,50 @@ getList()
 
     <el-table v-loading="loading" :data="messageNotificationLogList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column v-if="true" label="消息ID" align="center" prop="id" />
-      <el-table-column label="消息内容" align="center" prop="content" />
+      <el-table-column v-if="true" label="消息记录ID" align="center" prop="id" min-width="110" />
+      <!-- <el-table-column label="消息内容" align="center" prop="platformId" /> -->
+      <el-table-column label="消息内容" align="center" prop="content" min-width="200px" />
+      <!-- <el-table-column label="消息类型" align="center" prop="typeCode" /> -->
       <el-table-column label="消息类型" align="center" prop="typeName" />
+      <!-- <el-table-column label="发送渠道" align="center" prop="channelCode" /> -->
       <el-table-column label="发送渠道" align="center" prop="channelName" />
-      <el-table-column label="发送人员" align="center" prop="sendPersonnelName" />
-      <el-table-column label="发送终端" align="center" prop="sendPersonnelTerminalCode" />
-      <el-table-column label="发送时间" align="center" prop="sendTime" />
-      <el-table-column label="发送状态" align="center" prop="sendRequestStatusName" />
-      <el-table-column label="消息状态" align="center" prop="sendOpStatusName" />
-      <el-table-column label="状态描述" align="center" prop="platformSendOpStatusMsg" />
-      <el-table-column label="市级部门" align="center" prop="cityDeptName" />
-      <el-table-column label="区县部门" align="center" prop="countyDeptName" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <!-- <el-table-column label="发送类型" align="center" prop="sendTypeCode" /> -->
+      <el-table-column label="发送类型" align="center" prop="sendTypeName" />
+      <el-table-column label="人员ID" align="center" prop="sendPersonnelId" />
+      <!-- <el-table-column label="人员工号" align="center" prop="sendPersonnelCode" /> -->
+      <el-table-column label="人员姓名" align="center" prop="sendPersonnelName" min-width="110" />
+      <el-table-column label="发送人员终端标识" align="center" prop="sendPersonnelTerminalCode" />
+      <el-table-column label="发送时间" align="center" prop="sendTime" width="180">
         <template #default="scope">
-          <el-button v-hasPermi="['op:messageNotificationCombineLog:query']" link type="primary" icon="View" @click="handleUpdate(scope.row)">
+          <span>{{ parseTime(scope.row.sendTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="发送状态" align="center" prop="sendRequestStatusCode" /> -->
+      <el-table-column label="发送状态" align="center" prop="sendRequestStatusName" />
+      <el-table-column label="发送状态，平台原始数据" align="center" prop="platformSendRequestStatusMsg" min-width="200" />
+      <el-table-column label="回执时间" align="center" prop="platformReportTime" width="180">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.platformReportTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="平台回执业务状态" align="center" prop="sendOpStatusCode" /> -->
+      <el-table-column label="平台回执业务状态" align="center" prop="sendOpStatusName" />
+      <el-table-column label="平台回执业务状态，平台原始数据" align="center" prop="platformSendOpStatusMsg" min-width="200" />
+      <!-- <el-table-column label="人员是否响应" align="center" prop="personnelRespondCode" />/ -->
+      <el-table-column label="人员是否响应" align="center" prop="personnelRespondName" />
+      <el-table-column label="人员响应时间" align="center" prop="personnelRespondTime" width="180">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.personnelRespondTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="消息对应业务的扩展参数" align="center" prop="businessParameters" min-width="120" />
+      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="150">
+        <template #default="scope">
+          <el-button v-hasPermi="['op:messageNotificationLog:query']" link type="primary" icon="View" @click="handleUpdate(scope.row)">
             查看
           </el-button>
-          <el-button v-hasPermi="['op:messageNotificationCombineLog:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">
+          <el-button v-hasPermi="['op:messageNotificationLog:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">
             删除
           </el-button>
         </template>
@@ -485,12 +469,6 @@ getList()
     <el-dialog v-model="open" :title="title" width="700px" append-to-body>
       <!-- :rules="rules" -->
       <el-form ref="messageNotificationLogRef" disabled :model="form" label-width="80px">
-        <el-form-item label="市级">
-          <el-input v-model="form.cityDeptName" type="text" placeholder="请输入" />
-        </el-form-item>
-        <el-form-item label="区县">
-          <el-input v-model="form.countyDeptName" type="text" placeholder="请输入" />
-        </el-form-item>
         <el-form-item label="消息内容">
           <!-- <editor v-model="form.content" :min-height="192" /> -->
           <el-input v-model="form.content" type="textarea" placeholder="请输入消息对应业务的扩展参数" />
@@ -515,8 +493,8 @@ getList()
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="发送类型" prop="sendOpStatusCode">
-          <el-select v-model="form.sendOpStatusCode" placeholder="请选择发送类型" style="width: 100%" clearable>
+        <el-form-item label="发送类型" prop="sendTypeCode">
+          <el-select v-model="form.sendTypeCode" placeholder="请选择发送类型" style="width: 100%" clearable>
             <el-option
               v-for="dict in inform_send_type"
               :key="dict.value"
@@ -535,7 +513,7 @@ getList()
         <el-form-item label="人员姓名" prop="sendPersonnelName">
           <el-input v-model="form.sendPersonnelName" placeholder="请输入人员姓名" />
         </el-form-item>
-        <el-form-item label="发送终端" prop="sendPersonnelTerminalCode">
+        <el-form-item label="发送人员终端标识" prop="sendPersonnelTerminalCode" label-width="136">
           <el-input v-model="form.sendPersonnelTerminalCode" placeholder="请输入发送人员终端标识" />
         </el-form-item>
         <el-form-item label="发送时间" prop="sendTime">
@@ -573,7 +551,7 @@ getList()
             style="width: 100%;"
           />
         </el-form-item>
-        <!-- <el-form-item label="平台回执业务状态" prop="sendOpStatusCode" label-width="140px">
+        <el-form-item label="平台回执业务状态" prop="sendOpStatusCode" label-width="140px">
           <el-select v-model="form.sendOpStatusCode" placeholder="请选择平台回执业务状态" style="width: 100%" clearable>
             <el-option
               v-for="dict in sys_common_status"
@@ -582,10 +560,10 @@ getList()
               :value="dict.value"
             />
           </el-select>
-        </el-form-item> -->
-        <!-- <el-form-item label="平台回执业务状态，平台原始数据" prop="platformSendOpStatusMsg" label-width="240">
+        </el-form-item>
+        <el-form-item label="平台回执业务状态，平台原始数据" prop="platformSendOpStatusMsg" label-width="240">
           <el-input v-model="form.platformSendOpStatusMsg" type="textarea" placeholder="请输入内容" />
-        </el-form-item> -->
+        </el-form-item>
         <!-- <el-form-item label="人员是否响应" prop="personnelRespondCode" label-width="140px">
           <el-select v-model="form.personnelRespondCode" placeholder="请选择人员是否响应" style="width: 100%" clearable>
             <el-option
@@ -610,9 +588,9 @@ getList()
             style="width: 100%;"
           />
         </el-form-item>
-        <!-- <el-form-item label="消息对应业务的扩展参数" prop="businessParameters" label-width="180">
+        <el-form-item label="消息对应业务的扩展参数" prop="businessParameters" label-width="180">
           <el-input v-model="form.businessParameters" type="textarea" placeholder="请输入内容" />
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
         </el-form-item>

@@ -57,6 +57,7 @@ async function getConfigData(payload) {
 
 function handleConfigCode(val) {
   if (val) {
+    queryParams.value.warningConfigDetailId = undefined
     getConfigData({ warningConfigCode: val })
   }
   else {
@@ -83,7 +84,7 @@ async function handleOver(row) {
 
 // 获取查询
 getTypeData()
-getConfigData()
+// getConfigData()
 
 getList()
 </script>
@@ -118,9 +119,9 @@ getList()
         <el-select v-model="queryParams.warningConfigDetailId" placeholder="请选择告警配置" style="width: 200px" clearable>
           <el-option
             v-for="dict in configOptions"
-            :key="dict.opFaultOrderAlarmCode"
-            :label="dict.opFaultOrderAlarmName"
-            :value="dict.opFaultOrderAlarmCode"
+            :key="dict.id"
+            :label="dict.warningConfigDetailName"
+            :value="dict.id"
           />
         </el-select>
       </el-form-item>
@@ -146,20 +147,19 @@ getList()
     </el-form>
 
     <el-table v-loading="loading" :data="list" @row-click="handleRowClick">
+      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="故障单编码" align="center" prop="faultOrderCode" />
-      <el-table-column label="告警配置编码" align="center" prop="warningConfigDetailId" />
+      <el-table-column label="站址运维ID" align="center" prop="opStationId" />
+      <el-table-column label="站址名称" align="center" prop="stationName" />
       <el-table-column label="告警渠道" align="center" prop="opFaultOrderAlarmChannelName" />
-      <el-table-column label="告警配置类型" align="center" prop="warningConfigName" />
-      <el-table-column label="业务辅助参数" align="center" prop="auxiliaryParameter" />
+      <el-table-column label="告警类型" align="center" prop="warningConfigName" />
       <el-table-column label="最后发送时间" align="center" prop="lastSendTime" />
-      <el-table-column label="最后发送告警时间策略值" align="center" prop="lastSendAlarmValue" />
       <el-table-column label="历史发送次数" align="center" prop="pastSendNumber" />
       <el-table-column label="是否结束" align="center" prop="isEnd">
         <template #default="scope">
           <dict-tag :options="sys_yes_no" :value="scope.row.isEnd" />
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button v-if="scope.row.isEnd === 'N'" v-hasPermi="['op:warningFaultOrderAlarmInfo:endAlarm']" link type="primary" icon="CloseBold" @click.stop="handleOver(scope.row)">

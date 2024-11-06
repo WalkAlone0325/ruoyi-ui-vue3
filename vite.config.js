@@ -31,9 +31,9 @@ export default defineConfig(({ mode, command }) => {
       proxy: {
         // https://cn.vitejs.dev/config/#server-proxy
         '/dev-api': {
-          // target: 'http://192.168.0.180:8085',
+          target: 'http://192.168.0.171:8085', // 本地 ip
           // target: 'http://192.168.0.155:8085',
-          target: 'http://220.194.140.28:8086/prod-api',
+          // target: 'http://220.194.140.28:8086/prod-api',
           changeOrigin: true,
           rewrite: p => p.replace(/^\/dev-api/, ''),
         },

@@ -325,7 +325,7 @@ const changeCountyCode = (val) => {
 function getList() {
   loading.value = true
   listStationInfo(queryParams.value).then((response) => {
-    stationInfoList.value = response.rows
+    stationInfoList.value = response.records
     total.value = response.total
     loading.value = false
   })
@@ -616,21 +616,24 @@ getList()
 
     <el-table v-loading="loading" :data="stationInfoList" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <el-table-column label="运维ID" align="center" prop="opStationId" />
       <el-table-column label="站址编码" align="center" prop="stationCode" />
       <el-table-column label="站址名称" align="center" prop="stationName" />
-      <el-table-column label="运维ID" align="center" prop="opStationId" />
+      <el-table-column label="站址状态" align="center" prop="stationStatusName" />
       <el-table-column label="所属省" align="center" prop="provinceName" />
       <el-table-column label="地市名称" align="center" prop="cityName" />
       <el-table-column label="区县名称" align="center" prop="countyName" />
       <el-table-column label="乡镇名称" align="center" prop="townsName" />
       <el-table-column label="网格名称" align="center" prop="gridName" />
+      <el-table-column label="维护人员" align="center" prop="opMachinePersonnelName" />
+      <el-table-column label="维护电话" align="center" prop="opMachinePersonnelPhone" />
       <el-table-column label="站址地址" align="center" prop="stationAddress" />
-      <el-table-column label="原产权单位" align="center" prop="originalPropertyRight" />
-      <el-table-column label="运营商共享情况名称" align="center" prop="accessOperatorName" />
+      <!-- <el-table-column label="原产权单位" align="center" prop="originalPropertyRight" /> -->
+      <!-- <el-table-column label="运营商共享情况名称" align="center" prop="accessOperatorName" /> -->
       <el-table-column label="移动公司维护服务等级" align="center" prop="mobileServiceLevelName" />
       <el-table-column label="联通公司维护服务等级" align="center" prop="unicomServiceLevelName" />
       <el-table-column label="电信公司维护服务等级" align="center" prop="telecomServiceLevelName" />
-      <el-table-column label="是否绑定" align="center" prop="isBindingName" />
+      <el-table-column label="是否绑定部门" align="center" prop="isBindingName" />
     </el-table>
 
     <pagination

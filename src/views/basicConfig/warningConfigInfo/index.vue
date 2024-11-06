@@ -55,6 +55,8 @@ function reset() {
   form.value = {
     code: null,
     name: null,
+    shortName: null,
+    timeOutPeriod: null,
     remark: null,
   }
   proxy.resetForm('warningConfigInfoRef')
@@ -239,7 +241,9 @@ getList()
     <el-table v-loading="loading" :data="warningConfigInfoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column v-if="true" label="告警类型编码" align="center" prop="code" />
+      <el-table-column label="告警简称" align="center" prop="shortName" />
       <el-table-column label="告警类型名称" align="center" prop="name" />
+      <el-table-column label="超时时长（分钟）" align="center" prop="timeOutPeriod" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -270,8 +274,14 @@ getList()
         <el-form-item label="告警类型名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入告警类型名称" />
         </el-form-item>
+        <el-form-item label="告警类型简称" prop="shortName">
+          <el-input v-model="form.shortName" placeholder="请输入告警类型简称" />
+        </el-form-item>
+        <el-form-item label="超时时长（分钟）" prop="timeOutPeriod">
+          <el-input v-model="form.timeOutPeriod" placeholder="请输入超时时长（分钟）" />
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template #footer>

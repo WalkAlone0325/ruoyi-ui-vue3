@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-// 查询通知公告列表
+// 日志
 export function listMsgLog(query) {
   return request({
-    url: '/op/messageNotificationCombineLog/list/page',
+    url: '/op/messageNotificationLog/list/page',
     method: 'get',
     params: query,
   })
@@ -12,33 +12,15 @@ export function listMsgLog(query) {
 // 查询通知公告详细
 export function getMessageNotificationLog(id) {
   return request({
-    url: `/op/messageNotificationCombineLog/${id}`,
+    url: `/op/messageNotificationLog/${id}`,
     method: 'get',
   })
 }
 
-// 新增通知公告
-export function addMessageNotificationCombineLog(data) {
+// 删除日志
+export function delMsgLog(stationCode) {
   return request({
-    url: '/op/messageNotificationCombineLog',
-    method: 'post',
-    data,
-  })
-}
-
-// 修改通知公告
-export function updateMessageNotificationCombineLog(data) {
-  return request({
-    url: '/op/messageNotificationCombineLog',
-    method: 'put',
-    data,
-  })
-}
-
-// 删除通知公告
-export function delMsgLog(id) {
-  return request({
-    url: `/op/messageNotificationCombineLog/${id}`,
+    url: `/op/messageNotificationLog/${stationCode}`,
     method: 'delete',
   })
 }

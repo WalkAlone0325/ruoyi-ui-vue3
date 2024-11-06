@@ -35,3 +35,21 @@ export function getStreet(query) {
     params: query,
   })
 }
+
+// 市级
+export function getCity(query) {
+  return request({
+    url: '/system/dept/list',
+    method: 'get',
+    params: query,
+  })
+}
+
+// 区级
+export function getCounty(query) {
+  return request({
+    url: '/system/dept/list',
+    method: 'get',
+    params: query,
+  })
+}

@@ -23,6 +23,7 @@ const total = ref(0)
 const title = ref('')
 const deptOptions = ref(undefined)
 const postOptions = ref([])
+const disabled = ref(false)
 
 /** 查询部门下拉树结构 */
 function getDeptTree() {
@@ -153,12 +154,14 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset()
+  disabled.value = false
   open.value = true
   title.value = '添加员工信息'
 }
 
 /** 修改按钮操作 */
-function handleUpdate(row) {
+function handleUpdate(row, isView) {
+  disabled.value = !!isView
   loading.value = true
   reset()
   const _personnelId = row.personnelId || ids.value
@@ -317,6 +320,18 @@ getList()
       </el-col>
       <el-col :span="1.5">
         <el-button
+          v-hasPermi="['system:personnelBasicInfo:query']"
+          type="primary"
+          plain
+          icon="View"
+          :disabled="single"
+          @click="handleUpdate({}, 'view')"
+        >
+          查看
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
           v-hasPermi="['system:personnelBasicInfo:edit']"
           type="success"
           plain
@@ -358,15 +373,23 @@ getList()
       <el-table-column label="人员工号" align="center" prop="personnelCode" />
       <el-table-column label="人员姓名" align="center" prop="name" />
       <el-table-column label="人员性别" align="center" prop="genderName" />
-      <el-table-column label="人员婚姻" align="center" prop="maritalName" />
-      <el-table-column label="通讯地址" align="center" prop="contactAddress" />
-      <el-table-column label="人员联系手机" align="center" prop="contactMobile" />
-      <el-table-column label="人员联系电话" align="center" prop="contactTel" />
-      <el-table-column label="人员联系邮箱" align="center" prop="contactEmail" />
+      <el-table-column label="联系手机" align="center" prop="contactMobile" />
       <el-table-column label="人员状态" align="center" prop="statusName" />
-      <el-table-column label="备注" align="center" prop="remark" width="200" />
+      <el-table-column label="部门名称" align="center">
+        <template #default="scope">
+          <div>{{ scope.row.deptName ? scope.row.deptName.map(i => `${i.deptName}, ${i.postName}`).join(';') : '' }}</div>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="人员婚姻" align="center" prop="maritalName" />
+      <el-table-column label="通讯地址" align="center" prop="contactAddress" />
+      <el-table-column label="人员联系电话" align="center" prop="contactTel" />
+      <el-table-column label="人员联系邮箱" align="center" prop="contactEmail" /> -->
+      <!-- <el-table-column label="备注" align="center" prop="remark" width="200" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
+          <el-button v-hasPermi="['system:personnelBasicInfo:query']" link type="primary" icon="View" @click="handleUpdate(scope.row, 'view')">
+            查看
+          </el-button>
           <el-button v-hasPermi="['system:personnelBasicInfo:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)">
             修改
           </el-button>
@@ -387,7 +410,7 @@ getList()
 
     <!-- 添加或修改员工信息对话框 -->
     <el-dialog v-model="open" :title="title" width="800px" append-to-body>
-      <el-form ref="personnelBasicInfoRef" :model="form" :rules="rules" label-width="auto">
+      <el-form ref="personnelBasicInfoRef" :disabled="disabled" :model="form" :rules="rules" label-width="auto">
         <el-row>
           <el-col :span="12">
             <el-form-item label="人员工号" prop="personnelCode">
@@ -571,7 +594,7 @@ getList()
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="submitForm">
+          <el-button v-if="!disabled" :loading="buttonLoading" type="primary" @click="submitForm">
             确 定
           </el-button>
           <el-button @click="cancel">

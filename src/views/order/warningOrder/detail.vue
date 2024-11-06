@@ -9,12 +9,12 @@ const { sys_yes_no, op_fault_order_alarm_channel } = proxy.useDict('sys_yes_no',
 const queryParams = ref({
   pageNum: 1,
   pageSize: 10,
-  faultOrderCode: undefined,
-  warningConfigCode: undefined,
-  warningConfigDetailId: undefined,
-  warningFaultOrderAlarmId: undefined,
-  opFaultOrderAlarmChannelCode: undefined,
-  isEnd: undefined,
+  faultOrderCode: null,
+  warningConfigCode: null,
+  warningConfigDetailId: null,
+  warningFaultOrderAlarmId: null,
+  opFaultOrderAlarmChannelCode: null,
+  isEnd: null,
 })
 const showSearch = ref(true)
 const configOptions = ref([])
@@ -26,7 +26,7 @@ const loading = ref(false)
 /** 查询站点信息列表 */
 function getList() {
   loading.value = true
-  listDetailWarningOrder({ ...queryParams.value }).then((response) => {
+  listDetailWarningOrder({ ...queryParams.value, warningFaultOrderAlarmId: route.query.id }).then((response) => {
     list.value = response.rows
     total.value = response.total
     loading.value = false
@@ -41,6 +41,8 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
+  queryParams.value.warningFaultOrderAlarmId = null
+  route.query.id = null
   proxy.resetForm('queryRef')
   configOptions.value = []
   handleQuery()
@@ -58,6 +60,7 @@ async function getConfigData(payload) {
 
 function handleConfigCode(val) {
   if (val) {
+    queryParams.value.warningConfigDetailId = undefined
     getConfigData({ warningConfigCode: val })
   }
   else {
@@ -74,16 +77,16 @@ async function handleOver(row) {
   }
 }
 
-watch(() => route.query.id, (val, preVal) => {
-  if (val && val !== preVal) {
-    queryParams.value.warningFaultOrderAlarmId = val
-  }
-}, { immediate: true })
+watch(() => route.query.id, (val) => {
+  queryParams.value.warningFaultOrderAlarmId = val
+  getList()
+})
 
 onMounted(() => {
+  queryParams.value.warningFaultOrderAlarmId = route.query.id
   // 获取查询
   getTypeData()
-  getConfigData()
+  // getConfigData()
 })
 
 getList()
@@ -92,6 +95,9 @@ getList()
 <template>
   <div class="app-container">
     <el-form v-show="showSearch" ref="queryRef" :model="queryParams" :inline="true" label-width="auto">
+      <el-form-item label="故障单ID" prop="warningFaultOrderAlarmId">
+        <el-input v-model="queryParams.warningFaultOrderAlarmId" clearable placeholder="请输入故障单编码" style="width: 200px;" />
+      </el-form-item>
       <el-form-item label="故障单编码" prop="faultOrderCode">
         <el-input v-model="queryParams.faultOrderCode" clearable placeholder="请输入故障单编码" style="width: 200px;" />
       </el-form-item>
@@ -119,9 +125,9 @@ getList()
         <el-select v-model="queryParams.warningConfigDetailId" placeholder="请选择告警配置" style="width: 200px" clearable>
           <el-option
             v-for="dict in configOptions"
-            :key="dict.opFaultOrderAlarmCode"
-            :label="dict.opFaultOrderAlarmName"
-            :value="dict.opFaultOrderAlarmCode"
+            :key="dict.id"
+            :label="dict.warningConfigDetailName"
+            :value="dict.id"
           />
         </el-select>
       </el-form-item>
@@ -147,26 +153,26 @@ getList()
     </el-form>
 
     <el-table v-loading="loading" :data="list">
+      <!-- <el-table-column label="故障单ID" align="center" prop="id" /> -->
+      <el-table-column label="告警工单ID" align="center" prop="warningFaultOrderAlarmId" />
       <el-table-column label="故障单编码" align="center" prop="faultOrderCode" />
-      <el-table-column label="操作序列" align="center" prop="operationSort" />
+      <el-table-column label="省级部门" align="center" prop="provinceDeptName" />
+      <el-table-column label="市级部门" align="center" prop="cityDeptName" />
+      <el-table-column label="区县部门" align="center" prop="countyDeptName" />
+      <el-table-column label="站址运维ID" align="center" prop="opStationId" />
+      <el-table-column label="站址名称" align="center" prop="stationName" />
+      <el-table-column label="动作列表" align="center" prop="operationSort" />
       <el-table-column label="操作时间" align="center" prop="operationTime" />
-      <el-table-column label="告警配置编码" align="center" prop="warningConfigDetailId" />
       <el-table-column label="告警渠道" align="center" prop="opFaultOrderAlarmChannelName" />
       <el-table-column label="告警配置类型" align="center" prop="warningConfigName" />
-      <el-table-column label="业务辅助参数" align="center" prop="auxiliaryParameter" />
       <el-table-column label="最后发送时间" align="center" prop="lastSendTime" />
       <el-table-column label="下次发送时间" align="center" prop="nextSendTime" />
-      <el-table-column label="最后发送告警时间策略值" align="center" prop="lastSendAlarmValue" />
-      <el-table-column label="下次发送告警时间策略值" align="center" prop="nextSendAlarmValue" />
       <el-table-column label="历史发送次数" align="center" prop="pastSendNumber" />
       <el-table-column label="是否结束" align="center" prop="isEnd">
         <template #default="scope">
           <dict-tag :options="sys_yes_no" :value="scope.row.isEnd" />
         </template>
       </el-table-column>
-      <el-table-column label="消息模板内容" align="center" prop="voiceTemplateContent" />
-      <el-table-column label="告警通知联系人" align="center" prop="contactMobiles" />
-      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button v-if="scope.row.isEnd === 'N'" v-hasPermi="['op:warningFaultOrderAlarmDetail:endAlarm']" link type="primary" icon="CloseBold" @click.stop="handleOver(scope.row)">

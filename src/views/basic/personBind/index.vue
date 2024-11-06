@@ -297,8 +297,20 @@ getList()
         </el-row>
 
         <el-table v-loading="loading" :data="bindList" @selection-change="handleSelectionBindChange">
-          <!-- <el-table-column type="selection" width="55" align="center" /> -->
+          <el-table-column type="selection" width="55" align="center" />
           <el-table-column label="人员工号" align="center" prop="personnelCode" />
+          <el-table-column label="人员姓名" align="center" prop="name" />
+          <el-table-column label="人员性别" align="center" prop="genderName" />
+          <el-table-column label="联系手机" align="center" prop="contactMobile" />
+          <el-table-column label="人员状态" align="center" prop="statusName" />
+          <el-table-column label="部门名称" align="center">
+            <template #default="scope">
+              <div>{{ scope.row.deptName ? scope.row.deptName.map(i => `${i.deptName}, ${i.postName}`).join(';') : '' }}</div>
+            </template>
+          </el-table-column>
+
+          <!-- <el-table-column type="selection" width="55" align="center" /> -->
+          <!-- <el-table-column label="人员工号" align="center" prop="personnelCode" />
           <el-table-column label="人员姓名" align="center" prop="name" />
           <el-table-column label="人员性别" align="center" prop="genderName" />
           <el-table-column label="人员婚姻" align="center" prop="maritalName" />
@@ -307,7 +319,7 @@ getList()
           <el-table-column label="人员联系电话" align="center" prop="contactTel" />
           <el-table-column label="人员联系邮箱" align="center" prop="contactEmail" />
           <el-table-column label="人员状态" align="center" prop="statusName" />
-          <el-table-column label="备注" align="center" prop="remark" width="200" />
+          <el-table-column label="备注" align="center" prop="remark" width="200" /> -->
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template #default="scope">
               <el-button v-hasPermi="['system:personnelBasicInfo:unbound']" link type="primary" icon="Delete" @click="handleDelete(scope.row)">
@@ -363,7 +375,19 @@ getList()
 
       <el-table v-loading="loading" height="600px" :data="notBindList" @selection-change="handleSelectionChange">
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
+        <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column label="人员工号" align="center" prop="personnelCode" />
+        <el-table-column label="人员姓名" align="center" prop="name" />
+        <el-table-column label="人员性别" align="center" prop="genderName" />
+        <el-table-column label="联系手机" align="center" prop="contactMobile" />
+        <el-table-column label="人员状态" align="center" prop="statusName" />
+        <el-table-column label="部门名称" align="center">
+          <template #default="scope">
+            <div>{{ scope.row.deptName ? scope.row.deptName.map(i => `${i.deptName}, ${i.postName}`).join(';') : '' }}</div>
+          </template>
+        </el-table-column>
+
+        <!-- <el-table-column label="人员工号" align="center" prop="personnelCode" />
         <el-table-column label="人员姓名" align="center" prop="name" />
         <el-table-column label="人员性别" align="center" prop="genderName" />
         <el-table-column label="人员婚姻" align="center" prop="maritalName" />
@@ -372,7 +396,7 @@ getList()
         <el-table-column label="人员联系电话" align="center" prop="contactTel" />
         <el-table-column label="人员联系邮箱" align="center" prop="contactEmail" />
         <el-table-column label="人员状态" align="center" prop="statusName" />
-        <el-table-column label="备注" align="center" prop="remark" width="200" />
+        <el-table-column label="备注" align="center" prop="remark" width="200" /> -->
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-button v-hasPermi="['system:user: add']" link type="primary" icon="Plus" @click="handleBind(scope.row)">
