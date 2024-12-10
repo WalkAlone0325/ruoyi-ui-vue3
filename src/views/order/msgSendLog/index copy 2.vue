@@ -41,13 +41,13 @@ const data = reactive({
     sendRequestStatusName: undefined,
     platformSendRequestStatusMsg: undefined,
     platformReportTime: undefined,
+    sendOpStatusCode: undefined,
     sendOpStatusName: undefined,
     platformSendOpStatusMsg: undefined,
     personnelRespondCode: undefined,
     personnelRespondName: undefined,
     personnelRespondTime: undefined,
     businessParameters: undefined,
-    faultOrderCode: undefined,
   },
   rules: {
     id: [
@@ -328,7 +328,7 @@ getList()
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="消息类型" prop="typeCode">
+      <el-form-item label="消息类型" prop="typeCode">
         <el-select v-model="queryParams.typeCode" placeholder="请选择消息类型" style="width: 220px" clearable>
           <el-option
             v-for="dict in inform_type"
@@ -337,11 +337,21 @@ getList()
             :value="dict.value"
           />
         </el-select>
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="发送渠道" prop="channelCode">
         <el-select v-model="queryParams.channelCode" placeholder="请选择发送渠道" style="width: 220px" clearable>
           <el-option
             v-for="dict in op_fault_order_alarm_channel"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="发送状态" prop="sendOpStatusCode">
+        <el-select v-model="queryParams.sendOpStatusCode" placeholder="请选择发送状态" style="width: 220px" clearable>
+          <el-option
+            v-for="dict in inform_send_type"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -358,26 +368,7 @@ getList()
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="回执状态" prop="sendOpStatusCode">
-        <el-select v-model="queryParams.sendOpStatusCode" placeholder="请选择平台回执业务状态" style="width: 220px" clearable>
-          <el-option
-            v-for="dict in sys_common_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="故障单" prop="faultOrderCode">
-        <el-input
-          v-model="queryParams.faultOrderCode"
-          placeholder="请输入故障单"
-          clearable
-          style="width: 220px"
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <!-- <el-form-item label="人员姓名" prop="sendPersonnelName">
+      <el-form-item label="人员姓名" prop="sendPersonnelName">
         <el-input
           v-model="queryParams.sendPersonnelName"
           placeholder="请输入人员姓名"
@@ -394,7 +385,7 @@ getList()
           style="width: 220px"
           @keyup.enter="handleQuery"
         />
-      </el-form-item> -->
+      </el-form-item>
 
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">
@@ -459,26 +450,18 @@ getList()
     <el-table v-loading="loading" :data="messageNotificationLogList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column v-if="true" label="消息ID" align="center" prop="id" />
-      <!-- <el-table-column label="消息内容" align="center" prop="content" /> -->
-      <!-- <el-table-column label="消息类型" align="center" prop="typeName" /> -->
+      <el-table-column label="消息内容" align="center" prop="content" />
+      <el-table-column label="消息类型" align="center" prop="typeName" />
       <el-table-column label="发送渠道" align="center" prop="channelName" />
-      <el-table-column label="人员姓名" align="center" prop="sendPersonnelName" />
-      <el-table-column label="人员终端标识" align="center" prop="sendPersonnelTerminalCode" />
+      <el-table-column label="发送人员" align="center" prop="sendPersonnelName" />
+      <el-table-column label="发送终端" align="center" prop="sendPersonnelTerminalCode" />
       <el-table-column label="发送时间" align="center" prop="sendTime" />
       <el-table-column label="发送状态" align="center" prop="sendRequestStatusName" />
-      <!-- <el-table-column label="发送状态，平台原始数据" align="center" prop="platformSendRequestStatusMsg" /> -->
-      <el-table-column label="回执时间" align="center" prop="platformReportTime" />
-      <el-table-column label="回执状态" align="center" prop="sendOpStatusName" width="130" />
-
-      <!-- <el-table-column label="消息状态" align="center" prop="sendOpStatusName" /> -->
-      <!-- <el-table-column label="状态描述" align="center" prop="platformSendOpStatusMsg" /> -->
-      <!-- <el-table-column label="平台回执业务状态，平台原始数据" align="center" prop="platformSendOpStatusMsg" /> -->
-      <!-- <el-table-column label="省级部门" align="center" prop="provinceDeptName" /> -->
+      <el-table-column label="消息状态" align="center" prop="sendOpStatusName" />
+      <el-table-column label="状态描述" align="center" prop="platformSendOpStatusMsg" />
       <el-table-column label="市级部门" align="center" prop="cityDeptName" />
       <el-table-column label="区县部门" align="center" prop="countyDeptName" />
-      <el-table-column label="故障单号" align="center" prop="faultOrderCodes" min-width="120"/>
-      <!-- <el-table-column label="工单明细信息集合" align="center" prop="faultOrderOperationJsons" /> -->
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="146px">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button v-hasPermi="['op:messageNotificationCombineLog:query']" link type="primary" icon="View" @click="handleUpdate(scope.row)">
             查看
@@ -501,26 +484,15 @@ getList()
     <!-- 添加或修改通知公告对话框 -->
     <el-dialog v-model="open" :title="title" width="700px" append-to-body>
       <!-- :rules="rules" -->
-      <el-form ref="messageNotificationLogRef" :model="form" label-width="80px">
-        <el-form-item label="消息ID">
-          <el-input v-model="form.id" readonly type="text" placeholder="" />
+      <el-form ref="messageNotificationLogRef" disabled :model="form" label-width="80px">
+        <el-form-item label="市级">
+          <el-input v-model="form.cityDeptName" type="text" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="消息内容" prop="content">
-          <el-input v-model="form.content" readonly type="textarea" placeholder="" :autosize="{minRows: 3, maxRows: 5}" />
+        <el-form-item label="区县">
+          <el-input v-model="form.countyDeptName" type="text" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="发送渠道" prop="channelName">
-          <el-input v-model="form.channelName" readonly type="text" placeholder="" />
-          <!-- <el-select v-model="form.channelCode" readonly placeholder="" style="width: 100%" clearable>
-            <el-option
-              v-for="dict in op_fault_order_alarm_channel"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            />
-          </el-select> -->
-        </el-form-item>
-        <!-- <el-form-item label="消息内容">
-          <editor v-model="form.content" :min-height="192" />
+        <el-form-item label="消息内容">
+          <!-- <editor v-model="form.content" :min-height="192" /> -->
           <el-input v-model="form.content" type="textarea" placeholder="请输入消息对应业务的扩展参数" />
         </el-form-item>
         <el-form-item label="消息类型" prop="typeCode">
@@ -532,8 +504,18 @@ getList()
               :value="dict.value"
             />
           </el-select>
-        </el-form-item> -->
-        <!-- <el-form-item label="发送类型" prop="sendOpStatusCode">
+        </el-form-item>
+        <el-form-item label="发送渠道" prop="channelCode">
+          <el-select v-model="form.channelCode" placeholder="请选择发送渠道" style="width: 100%" clearable>
+            <el-option
+              v-for="dict in op_fault_order_alarm_channel"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="发送类型" prop="sendOpStatusCode">
           <el-select v-model="form.sendOpStatusCode" placeholder="请选择发送类型" style="width: 100%" clearable>
             <el-option
               v-for="dict in inform_send_type"
@@ -542,63 +524,68 @@ getList()
               :value="dict.value"
             />
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
 
-        <!-- <el-form-item label="人员ID" prop="sendPersonnelId">
+        <el-form-item label="人员ID" prop="sendPersonnelId">
           <el-input v-model="form.sendPersonnelId" placeholder="请输入人员ID" />
         </el-form-item>
         <el-form-item label="人员工号" prop="sendPersonnelCode">
           <el-input v-model="form.sendPersonnelCode" placeholder="请输入人员工号" />
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="人员姓名" prop="sendPersonnelName">
-          <el-input v-model="form.sendPersonnelName" readonly placeholder="" />
+          <el-input v-model="form.sendPersonnelName" placeholder="请输入人员姓名" />
         </el-form-item>
         <el-form-item label="发送终端" prop="sendPersonnelTerminalCode">
-          <el-input v-model="form.sendPersonnelTerminalCode" readonly placeholder="" />
+          <el-input v-model="form.sendPersonnelTerminalCode" placeholder="请输入发送人员终端标识" />
         </el-form-item>
         <el-form-item label="发送时间" prop="sendTime">
-          <el-input v-model="form.sendTime" readonly type="text" placeholder="" />
+          <el-date-picker
+            v-model="form.sendTime"
+            clearable
+            type="date"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择发送时间"
+            style="width: 100%;"
+          />
         </el-form-item>
-        <el-form-item label="发送状态" prop="sendRequestStatusName">
-          <el-input v-model="form.sendRequestStatusName" readonly type="text" placeholder="" />
-          <!-- <el-select v-model="form.sendRequestStatusCode" readonly placeholder="" style="width: 100%" clearable>
+        <el-form-item label="发送状态" prop="sendRequestStatusCode">
+          <el-select v-model="form.sendRequestStatusCode" placeholder="请选择发送状态" style="width: 100%" clearable>
             <el-option
               v-for="dict in sys_common_status"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
             />
-          </el-select> -->
+          </el-select>
         </el-form-item>
-        <el-form-item label="平台反馈" prop="platformSendRequestStatusMsg">
-          <el-input v-model="form.platformSendRequestStatusMsg" readonly type="textarea" placeholder="" :autosize="{minRows: 3, maxRows: 5}" />
+        <el-form-item label="发送状态，平台原始数据" prop="platformSendRequestStatusMsg" label-width="180">
+          <el-input v-model="form.platformSendRequestStatusMsg" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="回执时间" prop="platformReportTime">
-          <el-input v-model="form.platformReportTime" readonly type="text" placeholder="" />
+          <el-date-picker
+            v-model="form.platformReportTime"
+            clearable
+            type="date"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择回执时间"
+            style="width: 100%;"
+          />
         </el-form-item>
-        <el-form-item label="回执状态" prop="sendOpStatusName">
-          <el-input v-model="form.sendOpStatusName" readonly type="text" placeholder="" />
-          <!-- <el-select v-model="form.sendOpStatusCode" readonly placeholder="" style="width: 100%" clearable>
+        <!-- <el-form-item label="平台回执业务状态" prop="sendOpStatusCode" label-width="140px">
+          <el-select v-model="form.sendOpStatusCode" placeholder="请选择平台回执业务状态" style="width: 100%" clearable>
             <el-option
               v-for="dict in sys_common_status"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
             />
-          </el-select> -->
-        </el-form-item>
-        <el-form-item label="回执数据" prop="platformSendOpStatusMsg">
-          <el-input v-model="form.platformSendOpStatusMsg" readonly type="textarea" placeholder="" :autosize="{minRows: 3, maxRows: 5}"/>
-        </el-form-item>
-        <el-form-item label="省级部门">
-          <el-input v-model="form.provinceDeptName" readonly type="text" placeholder="" />
-        </el-form-item>
-        <el-form-item label="市级部门">
-          <el-input v-model="form.cityDeptName" readonly type="text" placeholder="" />
-        </el-form-item>
-        <el-form-item label="区县部门">
-          <el-input v-model="form.countyDeptName" readonly type="text" placeholder="" />
-        </el-form-item>
+          </el-select>
+        </el-form-item> -->
+        <!-- <el-form-item label="平台回执业务状态，平台原始数据" prop="platformSendOpStatusMsg" label-width="240">
+          <el-input v-model="form.platformSendOpStatusMsg" type="textarea" placeholder="请输入内容" />
+        </el-form-item> -->
         <!-- <el-form-item label="人员是否响应" prop="personnelRespondCode" label-width="140px">
           <el-select v-model="form.personnelRespondCode" placeholder="请选择人员是否响应" style="width: 100%" clearable>
             <el-option
@@ -609,7 +596,7 @@ getList()
             />
           </el-select>
         </el-form-item> -->
-        <!-- <el-form-item label="人员是否响应" prop="personnelRespondName" label-width="110">
+        <el-form-item label="人员是否响应" prop="personnelRespondName" label-width="110">
           <el-input v-model="form.personnelRespondName" placeholder="请输入人员是否响应" />
         </el-form-item>
         <el-form-item label="人员响应时间" prop="personnelRespondTime" label-width="110">
@@ -622,15 +609,12 @@ getList()
             placeholder="请选择人员响应时间"
             style="width: 100%;"
           />
-        </el-form-item> -->
+        </el-form-item>
         <!-- <el-form-item label="消息对应业务的扩展参数" prop="businessParameters" label-width="180">
           <el-input v-model="form.businessParameters" type="textarea" placeholder="请输入内容" />
         </el-form-item> -->
-        <el-form-item label="故障单号" prop="faultOrderCodes">
-          <el-input v-model="form.faultOrderCodes" readonly placeholder="" />
-        </el-form-item>
-        <el-form-item label="工单明细" prop="faultOrderOperationJsons">
-          <el-input v-model="form.faultOrderOperationJsons" readonly type="textarea" placeholder="" :autosize="{minRows: 3, maxRows: 5}" />
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template #footer>
