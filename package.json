@@ -1,13 +1,11 @@
 {
-  "name": "ruoyi-vue-plus",
+  "name": "tower-order-admin",
   "type": "module",
   "version": "4.8.0",
   "description": "铁塔维护工单管理系统",
-  "author": "LionLi",
-  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/JavaLionLi/RuoYi-Vue-Plus-UI.git"
+    "url": "https://github.com/WalkAlone0325/tower-order-admin.git"
   },
   "scripts": {
     "dev": "vite",
