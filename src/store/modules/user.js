@@ -10,7 +10,8 @@ const useUserStore = defineStore(
       name: '',
       avatar: '',
       roles: [],
-      permissions: []
+      permissions: [],
+      address: ''
     }),
     actions: {
       // 登录
@@ -22,6 +23,7 @@ const useUserStore = defineStore(
         return new Promise((resolve, reject) => {
           login(username, password, code, uuid).then(res => {
             setToken(res.data.token)
+            localStorage.setItem('token', res.data.token);
             this.token = res.data.token
             resolve()
           }).catch(error => {

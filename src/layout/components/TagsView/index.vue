@@ -12,7 +12,7 @@
         @click.middle="!isAffix(tag) ? closeSelectedTag(tag) : ''"
         @contextmenu.prevent="openMenu(tag, $event)"
       >
-        {{ tag.title }}
+        <span @click="clickTag(tag)">{{ tag.title }}</span>
         <span v-if="!isAffix(tag)" @click.prevent.stop="closeSelectedTag(tag)">
           <close class="el-icon-close" style="width: 1em; height: 1em;vertical-align: middle;" />
         </span>
@@ -47,6 +47,7 @@ import { getNormalPath } from '@/utils/ruoyi'
 import useTagsViewStore from '@/store/modules/tagsView'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
+import useUserStore from '@/store/modules/user'
 
 const visible = ref(false);
 const top = ref(0);
@@ -58,6 +59,7 @@ const scrollPaneRef = ref(null);
 const { proxy } = getCurrentInstance();
 const route = useRoute();
 const router = useRouter();
+const userStore = useUserStore()
 
 const visitedViews = computed(() => useTagsViewStore().visitedViews);
 const routes = computed(() => usePermissionStore().routes);
@@ -78,6 +80,10 @@ onMounted(() => {
   initTags()
   addTags()
 })
+
+function clickTag(tag) {
+  userStore.address = tag.address
+}
 
 function isActive(r) {
   return r.path === route.path
@@ -140,9 +146,9 @@ function initTags() {
 function addTags() {
   const { name } = route
   if (name) {
-    useTagsViewStore().addView(route)
+    useTagsViewStore().addView(route, userStore.address)
     if (route.meta.link) {
-      useTagsViewStore().addIframeView(route);
+      useTagsViewStore().addIframeView(route, userStore.address);
     }
   }
   return false
@@ -204,6 +210,7 @@ function closeAllTags(view) {
 function toLastView(visitedViews, view) {
   const latestView = visitedViews.slice(-1)[0]
   if (latestView) {
+    clickTag(latestView)
     router.push(latestView.fullPath)
   } else {
     // now the default is to redirect to the home page if there is no tags-view,

@@ -7,23 +7,26 @@ const useTagsViewStore = defineStore(
       iframeViews: []
     }),
     actions: {
-      addView(view) {
-        this.addVisitedView(view)
-        this.addCachedView(view)
+      addView(view, address) {
+        this.addVisitedView(view, address)
+        this.addCachedView(view, address)
       },
-      addIframeView(view) {
+      addIframeView(view, address) {
         if (this.iframeViews.some(v => v.path === view.path)) return
         this.iframeViews.push(
           Object.assign({}, view, {
-            title: view.meta.title || 'no-name'
+            title: view.meta.title || 'no-name',
+            address
           })
         )
       },
-      addVisitedView(view) {
+      addVisitedView(view, address) {
+        console.log('🚀:>> ', address)
         if (this.visitedViews.some(v => v.path === view.path)) return
         this.visitedViews.push(
           Object.assign({}, view, {
-            title: view.meta.title || 'no-name'
+            title: view.meta.title || 'no-name',
+            address
           })
         )
       },

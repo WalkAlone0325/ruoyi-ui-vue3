@@ -265,6 +265,11 @@
                      </el-radio-group>
                   </el-form-item>
                </el-col>
+               <el-col :span="24" v-if="show">
+                  <el-form-item label="外链地址" prop="embeddedExternalAddress">
+                     <el-input v-model="form.embeddedExternalAddress" placeholder="请输入外链地址" />
+                  </el-form-item>
+               </el-col>
             </el-row>
          </el-form>
          <template #footer>
@@ -346,7 +351,8 @@ function reset() {
     isFrame: "1",
     isCache: "0",
     visible: "0",
-    status: "0"
+    status: "0",
+    embeddedExternalAddress: ''
   };
   proxy.resetForm("menuRef");
 }
@@ -407,6 +413,18 @@ async function handleUpdate(row) {
     title.value = "修改菜单";
   });
 }
+
+const show = ref(false)
+
+watch(form, (val) => {
+  console.log('🚀:>> ', form.value.component)
+  if(form.value.component == 'link') {
+    show.value = true
+  } else {
+    show.value = false
+  }
+}, {immediate: true, deep: true})
+
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["menuRef"].validate(valid => {
