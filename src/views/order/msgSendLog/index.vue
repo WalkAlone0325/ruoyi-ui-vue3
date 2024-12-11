@@ -296,9 +296,9 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('op/messageNotificationLog/export', {
+  proxy.download('op/messageNotificationCombineLog/export', {
     ...queryParams.value,
-  }, `messageNotificationLog_${new Date().getTime()}.xlsx`)
+  }, `消息发送日志_${new Date().getTime()}.xlsx`)
 }
 
 getCityData({ parentId: '1802875368297447438' })
@@ -442,7 +442,7 @@ getList()
           删除
         </el-button>
       </el-col>
-      <!-- <el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button
           v-hasPermi="['op:messageNotificationLog:export']"
           type="warning"
@@ -452,13 +452,13 @@ getList()
         >
           导出
         </el-button>
-      </el-col> -->
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @query-table="getList" />
     </el-row>
 
     <el-table v-loading="loading" :data="messageNotificationLogList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column v-if="true" label="消息ID" align="center" prop="id" />
+      <!-- <el-table-column v-if="true" label="消息ID" align="center" prop="id" /> -->
       <!-- <el-table-column label="消息内容" align="center" prop="content" /> -->
       <!-- <el-table-column label="消息类型" align="center" prop="typeName" /> -->
       <el-table-column label="发送渠道" align="center" prop="channelName" />
@@ -472,9 +472,9 @@ getList()
 
       <!-- <el-table-column label="消息状态" align="center" prop="sendOpStatusName" /> -->
       <!-- <el-table-column label="状态描述" align="center" prop="platformSendOpStatusMsg" /> -->
-      <!-- <el-table-column label="平台回执业务状态，平台原始数据" align="center" prop="platformSendOpStatusMsg" /> -->
+      <el-table-column label="回执数据" align="center" prop="platformSendOpStatusMsg" />
       <!-- <el-table-column label="省级部门" align="center" prop="provinceDeptName" /> -->
-      <el-table-column label="市级部门" align="center" prop="cityDeptName" />
+      <!-- <el-table-column label="市级部门" align="center" prop="cityDeptName" /> -->
       <el-table-column label="区县部门" align="center" prop="countyDeptName" />
       <el-table-column label="故障单号" align="center" prop="faultOrderCodes" min-width="120"/>
       <!-- <el-table-column label="工单明细信息集合" align="center" prop="faultOrderOperationJsons" /> -->
